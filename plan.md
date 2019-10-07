@@ -101,7 +101,9 @@ limited to: having a title, having notes, having tags, having subtasks which can
 be parallel or sequential, and having "defer until" dates, due dates, completion
 dates, and the ability to be dropped.
 
-**TODO**: explain how I'll shoehorn in the various design patterns this class teaches
+The two design patterns from class that I will be demonstrating are Singleton
+and Iterator. The `Document` will be a singleton and the filtering engine will
+be an iterator.
 
 ## Plan
 
