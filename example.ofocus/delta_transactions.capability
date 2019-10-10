@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>dateEnabled</key>
+	<date>2019-10-10T20:49:00Z</date>
+	<key>enablingClientIdentifier</key>
+	<string>cm3GScgD_ET</string>
+	<key>name</key>
+	<string>delta_transactions</string>
+	<key>origin</key>
+	<string>creation</string>
+</dict>
+</plist>
