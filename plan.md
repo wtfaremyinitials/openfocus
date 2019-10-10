@@ -11,7 +11,9 @@ projects, and more. I would like to build a free and open source command line
 version for native use on Linux. The original Mac and iOS apps for OmniFocus are
 great but I prefer to use command line tools on Linux as they integrate so well.
 The tool will be compatible with the original app's database format for
-interoperability.
+interoperability. The tool will allow todo items to be created, updated, and marked
+completed. Additionally the database will be able to be queried using the same
+"perspectives" system as in the original software.
 
 ## Technologies Involved
 
@@ -72,6 +74,8 @@ TUI (terminal user interface).
 Little is needed in terms of outside resources except for the official OmniFocus
 software to reverse engineer, which I already own. As discussed above the data
 format does not appear to be too esoteric, relying primarily on ZIPed XML files.
+To get data back into the standard OmniFocus client, database changes will be
+synced back to the original server via WebDAV.
 
 ## Architecture
 
@@ -80,7 +84,7 @@ The front end will be a command line tool that wraps a back end library that
 handles the actual functionality, much like the architecture of the cURL command
 line tool and library.
 
-The databse will be the same ZIPed XML as the official OmniFocus software.
+The database will be the same ZIPed XML as the official OmniFocus software.
 
 The data model will consist of a few objects that follow the serialized format
 closely. Firstly, there will be a `Document` object which encompasses all of the
@@ -159,8 +163,9 @@ free time I'll implement JSON output.
 ### Week 9 (2019-12-02)
 
 This week the final project presentation will be created. This includes a slide
-deck and speaker notes for what will be discussed at each slide. Additional time
-will be used for bug fixes and performance improvements.
+deck and speaker notes for what will be discussed at each slide. Additionally
+I'll test the software outside of my development environment with a fresh data
+set.
 
 ### Week 10 (2019-12-09)
 
