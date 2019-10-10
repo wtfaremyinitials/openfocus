@@ -5,3 +5,5 @@ authors = ["Will Franzen <wtfranzen@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+xml-rs = "0.8"
+chrono = "0.4"
