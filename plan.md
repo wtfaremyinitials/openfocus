@@ -12,8 +12,11 @@ version for native use on Linux. The original Mac and iOS apps for OmniFocus are
 great but I prefer to use command line tools on Linux as they integrate so well.
 The tool will be compatible with the original app's database format for
 interoperability. The tool will allow todo items to be created, updated, and marked
-completed. Additionally the database will be able to be queried using the same
-"perspectives" system as in the original software.
+completed. The attributes that can be updated are title, notes, tags, subtasks,
+parallel/sequential, "defer until" date, due date, completion date, and drop
+date. Each attribute will have a sensible corresponding command line flag.
+Additionally the database will be able to be queried using the same "perspectives"
+system as in the original software.
 
 ## Technologies Involved
 
@@ -165,7 +168,7 @@ free time I'll implement JSON output.
 This week the final project presentation will be created. This includes a slide
 deck and speaker notes for what will be discussed at each slide. Additionally
 I'll test the software outside of my development environment with a fresh data
-set.
+set on a friend's device.
 
 ### Week 10 (2019-12-09)
 
