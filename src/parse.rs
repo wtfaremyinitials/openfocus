@@ -192,7 +192,7 @@ fn parse_task<'a>(
         flagged,
         due,
         start,
-        estimated_duration: estimated_duration.expect("Tasks must have an estimated duration"),
+        estimated_duration,
         complete_by_children,
         order: order.expect("Tasks must have a subtask order"),
     })

@@ -39,7 +39,7 @@ pub struct Task {
     pub due: Option<DateTime<Utc>>,
     pub start: Option<DateTime<Utc>>,
     pub completed: Option<DateTime<Utc>>,
-    pub estimated_duration: u64,
+    pub estimated_duration: Option<u64>,
     pub complete_by_children: bool,
     pub order: SubtaskOrder,
     // TODO: repetition and clone attributes
