@@ -88,6 +88,9 @@ fn parse_task<'a>(
     let mut flagged:  bool = false;
     let mut estimated_duration: Option<u64> = None;
     let mut complete_by_children: bool = false;
+    let mut start: Option<DateTime<Utc>> = None;
+    let mut completed: Option<DateTime<Utc>> = None;
+    let mut due: Option<DateTime<Utc>> = None;
 
     let mut depth = 1;
     while let Some(evt) = parser.next() {
@@ -112,6 +115,21 @@ fn parse_task<'a>(
                     "modified" => {
                         let text = get_text_content(parser.next())?;
                         modified = Some(text.parse()?);
+                    }
+                    "start" => {
+                        if let Ok(text) = get_text_content(parser.next()) {
+                            start = Some(text.parse()?);
+                        }
+                    }
+                    "completed" => {
+                        if let Ok(text) = get_text_content(parser.next()) {
+                            completed = Some(text.parse()?);
+                        }
+                    }
+                    "due" => {
+                        if let Ok(text) = get_text_content(parser.next()) {
+                            due = Some(text.parse()?);
+                        }
                     }
                     "name" => {
                         let text = get_text_content(parser.next())?;
@@ -165,8 +183,11 @@ fn parse_task<'a>(
         modified: modified.expect("Tasks must have a modified datetime"),
         name: title.expect("Tasks must have a name"),
         note,
+        completed,
         context,
         flagged,
+        due,
+        start,
         estimated_duration: estimated_duration.expect("Tasks must have an estimated duration"),
         complete_by_children,
         order: order.expect("Tasks must have a subtask order"),
