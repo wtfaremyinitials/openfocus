@@ -133,6 +133,11 @@ fn parse_task<'a>(
                         flagged = text.parse()?;
 
                     }
+                    "estimated-minutes" => {
+                        if let Ok(text)= get_text_content(parser.next()) {
+                            estimated_duration = Some(text.parse()?);
+                        }
+                    }
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
             }
