@@ -131,12 +131,15 @@ fn parse_task<'a>(
                     "flagged" => {
                         let text = get_text_content(parser.next())?;
                         flagged = text.parse()?;
-
                     }
                     "estimated-minutes" => {
                         if let Ok(text)= get_text_content(parser.next()) {
                             estimated_duration = Some(text.parse()?);
                         }
+                    }
+                    "completed-by-children" => {
+                        let text = get_text_content(parser.next())?;
+                        complete_by_children = text.parse()?;
                     }
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
