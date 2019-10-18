@@ -9,7 +9,7 @@ use crate::task::{Task, SubtaskOrder, ID};
 // TODO: move to error.rs
 type Error = Box<std::error::Error>;
 #[derive(Debug)]
-enum OpenFocusError { Generic }
+enum OpenFocusError { Parse }
 impl std::error::Error for OpenFocusError {}
 impl std::fmt::Display for OpenFocusError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -109,7 +109,12 @@ fn parse_task<'a>(
                         parent = attrs_get_val(attributes, "idref");
                     }
                     "rank" => {
-
+                        let next = parser.next();
+                        if let Some(Ok(XmlEvent::Characters(text))) = next {
+                            rank = Some(text.parse()?);
+                        } else {
+                            return Err(Box::new(OpenFocusError::Parse));
+                        }
                     }
                     "inbox" => inbox = true,
                     "note" => { skip(parser); },
