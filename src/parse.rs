@@ -4,18 +4,8 @@ use xml::reader::{EventReader, XmlEvent};
 use xml::attribute::OwnedAttribute;
 use chrono::prelude::*;
 
+use crate::error::*;
 use crate::task::{Task, SubtaskOrder, ID};
-
-// TODO: move to error.rs
-type Error = Box<std::error::Error>;
-#[derive(Debug)]
-enum OpenFocusError { Parse }
-impl std::error::Error for OpenFocusError {}
-impl std::fmt::Display for OpenFocusError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
-    }
-}
 
 pub fn parse(f: File) -> Result<(), Error> {
     let mut zip = ZipArchive::new(f)?;
@@ -133,6 +123,10 @@ fn parse_task<'a>(
                     },
                     "context" => {
                         context = attrs_get_val(attributes, "idref");
+                    }
+                    "order" => {
+                        let text = get_text_content(parser.next())?;
+                        order = Some(text.parse()?);
                     }
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
