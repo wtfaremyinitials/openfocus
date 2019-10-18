@@ -7,12 +7,13 @@ use chrono::prelude::*;
 use crate::error::*;
 use crate::task::{Task, SubtaskOrder, ID};
 
-pub fn parse(f: File) -> Result<(), Error> {
+pub fn parse(f: File) -> Result<Vec<Task>, Error> {
     let mut zip = ZipArchive::new(f)?;
     let contents = zip.by_name("contents.xml")?;
     assert!(contents.is_file());
 
     let mut parser = EventReader::new(contents).into_iter();
+    let mut tasks: Vec<Task> = Vec::new();
 
     while let Some(evt) = parser.next() {
         match evt {
@@ -20,7 +21,7 @@ pub fn parse(f: File) -> Result<(), Error> {
                 match name_to_str(&name) {
                     "task" => {
                         let task = parse_task(&mut parser, attributes)?;
-                        println!("task {:?}", task);
+                        tasks.push(task);
                     }
                     "omnifocus" => continue,
                     // TODO: other object parsers
@@ -29,7 +30,7 @@ pub fn parse(f: File) -> Result<(), Error> {
             }
             Ok(XmlEvent::EndElement { name }) => {
                 if name_to_str(&name) == "omnifocus" {
-                    unimplemented!("done parsing yay!!")
+                    break
                 }
             }
             Err(e) => {
@@ -39,7 +40,7 @@ pub fn parse(f: File) -> Result<(), Error> {
         }
     }
 
-    panic!("got to end of loop prematurely")
+    Ok(tasks)
 }
 
 fn skip<'a>(
