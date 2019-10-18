@@ -131,6 +131,9 @@ fn parse_task<'a>(
                         // TODO
                         skip(parser);
                     },
+                    "context" => {
+                        context = attrs_get_val(attributes, "idref");
+                    }
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
             }
