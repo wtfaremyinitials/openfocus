@@ -28,7 +28,7 @@ pub fn parse(f: File) -> Result<(), Error> {
                 }
             }
             Ok(XmlEvent::EndElement { name }) => {
-                if (name_to_str(&name) == "omnifocus")  {
+                if name_to_str(&name) == "omnifocus" {
                     unimplemented!("done parsing yay!!")
                 }
             }
@@ -111,7 +111,7 @@ fn parse_task<'a>(
                     }
                     "modified" => {
                         let text = get_text_content(parser.next())?;
-                        added = Some(text.parse()?);
+                        modified = Some(text.parse()?);
                     }
                     "name" => {
                         let text = get_text_content(parser.next())?;
@@ -119,7 +119,8 @@ fn parse_task<'a>(
                     }
                     "note" => {
                         // TODO
-                        skip(parser);
+                        skip(parser)?;
+                        note = Some(String::new());
                     },
                     "context" => {
                         context = attrs_get_val(attributes, "idref");
@@ -144,7 +145,7 @@ fn parse_task<'a>(
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
             }
-            Ok(XmlEvent::EndElement { name }) => {
+            Ok(XmlEvent::EndElement { .. }) => {
                 depth -= 1;
                 if depth == 0 {
                     break;
@@ -161,7 +162,7 @@ fn parse_task<'a>(
         rank: rank.expect("Tasks must have a rank"),
         inbox,
         added: added.expect("Tasks must have an added datetime"),
-        modified: added.expect("Tasks must have a modified datetime"),
+        modified: modified.expect("Tasks must have a modified datetime"),
         name: title.expect("Tasks must have a name"),
         note,
         context,
