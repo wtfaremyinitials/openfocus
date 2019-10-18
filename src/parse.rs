@@ -91,7 +91,7 @@ fn parse_task<'a>(
     let mut added:    Option<DateTime<Utc>> = None;
     let mut modified: Option<DateTime<Utc>> = None;
     // attributes
-    let mut name:     Option<String> = None;
+    let mut title:    Option<String> = None;
     let mut note:     Option<String> = None;
     let mut context:  Option<ID> = None;
     let mut order:    Option<SubtaskOrder> = None;
@@ -123,6 +123,10 @@ fn parse_task<'a>(
                         let text = get_text_content(parser.next())?;
                         added = Some(text.parse()?);
                     }
+                    "name" => {
+                        let text = get_text_content(parser.next())?;
+                        title = Some(text);
+                    }
                     "note" => {
                         // TODO
                         skip(parser);
@@ -148,7 +152,7 @@ fn parse_task<'a>(
         inbox,
         added: added.expect("Tasks must have an added datetime"),
         modified: added.expect("Tasks must have a modified datetime"),
-        name: name.expect("Tasks must have a name"),
+        name: title.expect("Tasks must have a name"),
         note,
         context,
         flagged,
