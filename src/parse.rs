@@ -160,7 +160,11 @@ fn parse_task<'a>(
                         let text = get_text_content(parser.next())?;
                         complete_by_children = text.parse()?;
                     }
-                    _ => println!("child of task {:?} {:?}", name, attributes)
+                    "project" => {
+                        // TODO
+                        skip(parser)?;
+                    }
+                    _ => {/*println!("child {:?} {:?}", name, attributes)*/}
                 }
             }
             Ok(XmlEvent::EndElement { .. }) => {
