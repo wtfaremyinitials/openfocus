@@ -39,7 +39,7 @@ pub fn parse(f: File) -> Result<(), Error> {
         }
     }
 
-    Ok(())
+    panic!("got to end of loop prematurely")
 }
 
 fn skip<'a>(
@@ -119,16 +119,22 @@ fn parse_task<'a>(
                     "start" => {
                         if let Ok(text) = get_text_content(parser.next()) {
                             start = Some(text.parse()?);
+                        } else {
+                            depth -= 1;
                         }
                     }
                     "completed" => {
                         if let Ok(text) = get_text_content(parser.next()) {
                             completed = Some(text.parse()?);
+                        } else {
+                            depth -= 1;
                         }
                     }
                     "due" => {
                         if let Ok(text) = get_text_content(parser.next()) {
                             due = Some(text.parse()?);
+                        } else {
+                            depth -= 1
                         }
                     }
                     "name" => {
@@ -138,6 +144,7 @@ fn parse_task<'a>(
                     "note" => {
                         // TODO
                         skip(parser)?;
+                        depth -= 1;
                         note = Some(String::new());
                     },
                     "context" => {
@@ -154,6 +161,8 @@ fn parse_task<'a>(
                     "estimated-minutes" => {
                         if let Ok(text)= get_text_content(parser.next()) {
                             estimated_duration = Some(text.parse()?);
+                        } else {
+                            depth -= 1;
                         }
                     }
                     "completed-by-children" => {
@@ -163,6 +172,7 @@ fn parse_task<'a>(
                     "project" => {
                         // TODO
                         skip(parser)?;
+                        depth -= 1;
                     }
                     _ => {/*println!("child {:?} {:?}", name, attributes)*/}
                 }
