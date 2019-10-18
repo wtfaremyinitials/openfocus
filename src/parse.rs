@@ -112,6 +112,9 @@ fn parse_task<'a>(
                         let text = get_text_content(parser.next())?;
                         rank = Some(text.parse()?);
                     }
+                    "inbox" => {
+                        inbox = true;
+                    }
                     "added" => {
                         let text = get_text_content(parser.next())?;
                         added = Some(text.parse()?);
@@ -120,10 +123,8 @@ fn parse_task<'a>(
                         let text = get_text_content(parser.next())?;
                         added = Some(text.parse()?);
                     }
-                    "inbox" => {
-                        inbox = true;
-                    }
                     "note" => {
+                        // TODO
                         skip(parser);
                     },
                     _ => println!("child of task {:?} {:?}", name, attributes)
