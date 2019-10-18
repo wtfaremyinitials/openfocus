@@ -128,6 +128,11 @@ fn parse_task<'a>(
                         let text = get_text_content(parser.next())?;
                         order = Some(text.parse()?);
                     }
+                    "flagged" => {
+                        let text = get_text_content(parser.next())?;
+                        flagged = text.parse()?;
+
+                    }
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
             }
