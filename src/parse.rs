@@ -109,15 +109,23 @@ fn parse_task<'a>(
                         parent = attrs_get_val(attributes, "idref");
                     }
                     "rank" => {
-                        let next = parser.next();
-                        if let Some(Ok(XmlEvent::Characters(text))) = next {
-                            rank = Some(text.parse()?);
-                        } else {
-                            return Err(Box::new(OpenFocusError::Parse));
-                        }
+                        let text = get_text_content(parser.next())?;
+                        rank = Some(text.parse()?);
                     }
-                    "inbox" => inbox = true,
-                    "note" => { skip(parser); },
+                    "added" => {
+                        let text = get_text_content(parser.next())?;
+                        added = Some(text.parse()?);
+                    }
+                    "modified" => {
+                        let text = get_text_content(parser.next())?;
+                        added = Some(text.parse()?);
+                    }
+                    "inbox" => {
+                        inbox = true;
+                    }
+                    "note" => {
+                        skip(parser);
+                    },
                     _ => println!("child of task {:?} {:?}", name, attributes)
                 }
             }
@@ -158,6 +166,16 @@ fn attrs_get_val(attrs: Vec<OwnedAttribute>, name: &str) -> Option<String> {
         .iter()
         .find(|attr| name_to_str(&attr.name) == name)
         .map(|a| a.value.clone())
+}
+
+fn get_text_content(
+    next: Option<Result<XmlEvent, xml::reader::Error>>
+) -> Result<String, Error> {
+    if let Some(Ok(XmlEvent::Characters(text))) = next {
+        Ok(text)
+    } else {
+        Err(Box::new(OpenFocusError::Parse))
+    }
 }
 
 #[cfg(test)]
