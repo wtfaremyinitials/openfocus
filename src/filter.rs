@@ -4,7 +4,7 @@ type Toggle<T> = Option<T>;
 
 // each field is an optional "Toggle". If it is Some() it applies to the filter,
 // if none it is ignored
-struct Filter {
+pub struct Filter {
     inbox: Toggle<bool>,
     has_project: Toggle<bool>,
 }
@@ -34,7 +34,7 @@ impl Filter {
     }
 }
 
-struct FilterIter<'a, I> where I: Iterator<Item=&'a Task> {
+pub struct FilterIter<'a, I> where I: Iterator<Item=&'a Task> {
     filter: Filter,
     tasks: I,
 }

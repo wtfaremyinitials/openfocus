@@ -4,7 +4,7 @@ use crate::error::*;
 
 pub type ID = String;
 
-fn generateID() -> ID {
+fn generate_id() -> ID {
     "x1234567890".into() // TODO
 }
 
@@ -52,7 +52,7 @@ pub struct Task {
 impl Default for Task {
     fn default() -> Self {
         Task {
-            id: generateID(),
+            id: generate_id(),
             parent: None,
             rank: 0,
             inbox: false,

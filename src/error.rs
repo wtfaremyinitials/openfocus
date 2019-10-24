@@ -1,4 +1,4 @@
-pub type Error = Box<std::error::Error>;
+pub type Error = Box<dyn std::error::Error>;
 
 #[derive(Debug)]
 pub enum OpenFocusError { Parse }
