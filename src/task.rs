@@ -4,7 +4,11 @@ use crate::error::*;
 
 pub type ID = String;
 
-#[derive(Debug)]
+fn generateID() -> ID {
+    "x1234567890".into() // TODO
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub enum SubtaskOrder {
     Parallel,
     Sequential,
@@ -22,7 +26,7 @@ impl std::str::FromStr for SubtaskOrder {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Task {
     // metadata
     pub id: ID,
@@ -43,4 +47,27 @@ pub struct Task {
     pub complete_by_children: bool,
     pub order: SubtaskOrder,
     // TODO: repetition and clone attributes
+}
+
+impl Default for Task {
+    fn default() -> Self {
+        Task {
+            id: generateID(),
+            parent: None,
+            rank: 0,
+            inbox: false,
+            added: Utc::now(),
+            modified: Utc::now(),
+            name: "".into(),
+            note: None,
+            context: None,
+            flagged: false,
+            due: None,
+            start: None,
+            completed: None,
+            estimated_duration: None,
+            complete_by_children: false,
+            order: SubtaskOrder::Sequential,
+        }
+    }
 }
