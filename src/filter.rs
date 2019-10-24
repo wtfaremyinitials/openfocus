@@ -5,21 +5,27 @@ type Toggle<T> = Option<T>;
 // each field is an optional "Toggle". If it is Some() it applies to the filter,
 // if none it is ignored
 struct Filter {
-    inbox: Toggle<bool>
+    inbox: Toggle<bool>,
+    has_project: Toggle<bool>,
 }
 
 impl Filter {
     pub fn empty() -> Filter {
         Filter {
             inbox: None,
+            has_project: None,
         }
     }
 
     pub fn new_inbox() -> Filter {
         let mut f = Filter::empty();
-
         f.inbox = Some(true);
+        f
+    }
 
+    pub fn new_projects() -> Filter {
+        let mut f = Filter::empty();
+        f.has_project = Some(true);
         f
     }
 
@@ -46,6 +52,12 @@ impl<'a, I> Iterator for FilterIter<'a, I> where I: Iterator<Item=&'a Task> {
         while let Some(task) = self.tasks.next() {
             if let Some(inbox) = self.filter.inbox {
                 if task.inbox != inbox {
+                    continue;
+                }
+            }
+
+            if let Some(has_project) = self.filter.has_project {
+                if task.parent.is_some() != has_project {
                     continue;
                 }
             }
@@ -79,9 +91,33 @@ mod tests {
         tasks[2].inbox = true;
 
         let iter = Filter::new_inbox().into_iter(tasks.iter());
-
         let filtered: Vec<&Task> = iter.collect();
+
         assert!(filtered[0] == &tasks[1]);
         assert!(filtered[1] == &tasks[2]);
+        assert!(filtered.len() == 2);
+    }
+
+    #[test]
+    fn test_filter_projects() {
+        let mut tasks = vec![
+            Task::default(),
+            Task::default(),
+            Task::default(),
+        ];
+
+        tasks[0].id = "foo".into();
+        tasks[1].id = "bar".into();
+        tasks[2].id = "baz".into();
+
+        tasks[0].parent = Some("someproj".into());
+        tasks[2].parent = Some("someproj".into());
+
+        let iter = Filter::new_projects().into_iter(tasks.iter());
+        let filtered: Vec<&Task> = iter.collect();
+
+        assert!(filtered[0] == &tasks[0]);
+        assert!(filtered[1] == &tasks[2]);
+        assert!(filtered.len() == 2);
     }
 }
