@@ -6,6 +6,8 @@ use chrono::prelude::*;
 
 use crate::error::*;
 use crate::task::{Task, SubtaskOrder, ID};
+use crate::perspective::{Perspective};
+use crate::plist;
 
 pub fn parse(f: File) -> Result<Vec<Task>, Error> {
     let mut zip = ZipArchive::new(f)?;
@@ -22,6 +24,9 @@ pub fn parse(f: File) -> Result<Vec<Task>, Error> {
                     "task" => {
                         let task = parse_task(&mut parser, attributes)?;
                         tasks.push(task);
+                    }
+                    "perspective" => {
+                        let task = parse_perspective(&mut parser, attributes)?;
                     }
                     "omnifocus" => continue,
                     // TODO: other object parsers
@@ -209,7 +214,45 @@ fn parse_task<'a>(
     })
 }
 
-fn name_to_str<'a>(name: &'a xml::name::OwnedName) -> &'a str {
+fn parse_perspective<'a>(
+    mut parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
+    root_attrs: Vec<OwnedAttribute>,
+) -> Result<Perspective, Error> {
+    // TODO: depth purely for error handling? 
+
+    let mut added: Option<DateTime<Utc>> = None;
+
+    while let Some(evt) = parser.next() {
+        match evt {
+            Ok(XmlEvent::StartElement { name, attributes, .. }) => {
+                match name_to_str(&name) {
+                    "added" => {
+                        let text = get_text_content(parser.next())?;
+                        added = Some(text.parse()?);
+                    }
+                    "plist" => {
+                        let plist = plist::parse_plist(&mut parser);
+                        dbg!(plist);
+                    }
+                    _ => {}
+                }
+            }
+            Ok(XmlEvent::EndElement { name }) => {
+                if name_to_str(&name) == "perspective" {
+                    break
+                }
+            }
+            _ => {}
+        }
+    }
+
+    Ok(Perspective {
+        id: "foo".into(), // TODO grab id
+        added: added.expect("added is required"),
+    })
+}
+
+pub fn name_to_str<'a>(name: &'a xml::name::OwnedName) -> &'a str {
     name.local_name.as_str()
 }
 
@@ -220,7 +263,7 @@ fn attrs_get_val(attrs: Vec<OwnedAttribute>, name: &str) -> Option<String> {
         .map(|a| a.value.clone())
 }
 
-fn get_text_content(
+pub fn get_text_content(
     next: Option<Result<XmlEvent, xml::reader::Error>>
 ) -> Result<String, Error> {
     if let Some(Ok(XmlEvent::Characters(text))) = next {
