@@ -6,14 +6,20 @@ type Toggle<T> = Option<T>;
 // if none it is ignored
 pub struct Filter {
     inbox: Toggle<bool>,
+    flagged: Toggle<bool>,
+    completed: Toggle<bool>,
     has_project: Toggle<bool>,
+    has_due_date: Toggle<bool>,
 }
 
 impl Filter {
     pub fn empty() -> Filter {
         Filter {
             inbox: None,
+            flagged: None,
+            completed: None,
             has_project: None,
+            has_due_date: None,
         }
     }
 
@@ -23,9 +29,27 @@ impl Filter {
         f
     }
 
+    pub fn new_flagged() -> Filter {
+        let mut f = Filter::empty();
+        f.flagged = Some(true);
+        f
+    }
+
     pub fn new_projects() -> Filter {
         let mut f = Filter::empty();
         f.has_project = Some(true);
+        f
+    }
+
+    pub fn new_forecast() -> Filter {
+        let mut f = Filter::empty();
+        f.has_due_date = Some(true);
+        f
+    }
+
+    pub fn new_completed() -> Filter {
+        let mut f = Filter::empty();
+        f.completed = Some(true);
         f
     }
 
@@ -56,13 +80,29 @@ impl<'a, I> Iterator for FilterIter<'a, I> where I: Iterator<Item=&'a Task> {
                 }
             }
 
+            if let Some(flagged) = self.filter.flagged {
+                if task.flagged != flagged {
+                    continue;
+                }
+            }
+
+            if let Some(completed) = self.filter.completed {
+                if task.completed.is_some() != completed {
+                    continue;
+                }
+            }
+
             if let Some(has_project) = self.filter.has_project {
                 if task.parent.is_some() != has_project {
                     continue;
                 }
             }
 
-            // TODO: implement more filters
+            if let Some(has_due_date) = self.filter.has_due_date {
+                if task.due.is_some() != has_due_date {
+                    continue;
+                }
+            }
 
             return Some(task);
         }
