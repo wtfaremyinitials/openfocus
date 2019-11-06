@@ -26,7 +26,7 @@ pub fn parse(f: File) -> Result<Vec<Task>, Error> {
                         tasks.push(task);
                     }
                     "perspective" => {
-                        let task = parse_perspective(&mut parser, attributes)?;
+                        // let task = parse_perspective(&mut parser, attributes)?;
                     }
                     "omnifocus" => continue,
                     // TODO: other object parsers
