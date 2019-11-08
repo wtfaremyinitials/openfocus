@@ -27,7 +27,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
     let filter = perspective_name_to_filter(&args[2]);
 
     for t in filter.into_iter(tasks.iter()) {
-        println!("{:?}", t);
+        println!("{}", t);
     }
 
     Ok(())

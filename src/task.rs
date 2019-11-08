@@ -1,3 +1,4 @@
+use std::fmt;
 use chrono::prelude::*;
 
 use crate::error::*;
@@ -69,5 +70,27 @@ impl Default for Task {
             complete_by_children: false,
             order: SubtaskOrder::Sequential,
         }
+    }
+}
+
+impl fmt::Display for Task {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let flag = if self.flagged { "!" } else { " " };
+        let complete = if self.completed.is_some() { "x" } else { " " };
+        let name = self.name.replace("\n", "");
+        let due = if let Some(due) = self.due {
+            "(".to_string() + &due.to_string() + ")"
+        } else {
+            "".into()
+        };
+
+        write!(
+            f,
+            "{}[{}] {}\t{}",
+            flag,
+            complete,
+            name,
+            due,
+        )
     }
 }
