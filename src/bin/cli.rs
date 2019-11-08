@@ -1,7 +1,23 @@
 use std::env;
-use std::fs::File;
+use std::fs::{read_dir, File};
 use openfocus::parse::parse;
 use openfocus::filter::Filter;
+use openfocus::error::*;
+
+fn open_file(path: &str) -> Result<File, Error> {
+    let data_path = read_dir(path)?
+        .filter(|p| {
+            p.is_ok() && p.as_ref().unwrap()
+                .path().to_str().unwrap()
+                .contains("00000000000000")
+        })
+        .next()
+        .expect("error reading file")
+        .expect("couldn't find data file")
+        .path();
+
+    Ok(File::open(data_path)?)
+}
 
 fn perspective_name_to_filter(name: &str) -> Filter {
     match name {
@@ -22,8 +38,8 @@ fn main() -> Result<(), Box<std::error::Error>> {
         std::process::exit(1);
     }
 
-    let file = File::open(&args[1])?;
-    let tasks = parse(file)?;
+    let file = open_file(&args[1]);
+    let tasks = parse(file?)?;
     let filter = perspective_name_to_filter(&args[2]);
 
     for t in filter.into_iter(tasks.iter()) {
