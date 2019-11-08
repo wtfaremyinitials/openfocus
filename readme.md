@@ -16,4 +16,4 @@ See [plan.md](./plan.md).
 
 ## Example Usage
 
-*coming soon*
+`$ cargo run --bin cli -- example.ofocus/ inbox`
