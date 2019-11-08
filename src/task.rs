@@ -78,6 +78,11 @@ impl fmt::Display for Task {
         let flag = if self.flagged { "!" } else { " " };
         let complete = if self.completed.is_some() { "x" } else { " " };
         let name = self.name.replace("\n", "");
+        let tabs = {
+            let column = 40;
+            let count = std::cmp::max(column - self.name.len(), 0) / 8;
+            "\t".repeat(count)
+        };
         let due = if let Some(due) = self.due {
             "(".to_string() + &due.to_string() + ")"
         } else {
@@ -86,10 +91,11 @@ impl fmt::Display for Task {
 
         write!(
             f,
-            "{}[{}] {}\t{}",
+            "{}[{}] {}{}{}",
             flag,
             complete,
             name,
+            tabs,
             due,
         )
     }
