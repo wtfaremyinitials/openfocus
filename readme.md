@@ -17,3 +17,7 @@ See [plan.md](./plan.md).
 ## Example Usage
 
 `$ cargo run --bin cli -- example.ofocus/ inbox`
+
+## Dependencies
+
+See [Cargo.toml](./Cargo.toml).
