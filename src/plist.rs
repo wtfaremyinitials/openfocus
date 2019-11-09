@@ -4,6 +4,8 @@ use xml::reader::XmlEvent;
 use crate::error::*;
 use crate::parse::{name_to_str, get_text_content};
 
+// helpers to handle OmniFocus's use of Apple's Property List (plist) format
+
 #[derive(Debug)]
 pub enum PlistItem {
     String(String),

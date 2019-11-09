@@ -13,6 +13,7 @@ pub struct Filter {
 }
 
 impl Filter {
+    // a filter that lets everything through
     pub fn empty() -> Filter {
         Filter {
             inbox: None,
@@ -23,41 +24,48 @@ impl Filter {
         }
     }
 
+    // a filter that shows Inbox items
     pub fn new_inbox() -> Filter {
         let mut f = Filter::empty();
         f.inbox = Some(true);
         f
     }
 
+    // a filter that shows flagged items
     pub fn new_flagged() -> Filter {
         let mut f = Filter::empty();
         f.flagged = Some(true);
         f
     }
 
+    // a filter that shows items assigned to projects
     pub fn new_projects() -> Filter {
         let mut f = Filter::empty();
         f.has_project = Some(true);
         f
     }
 
+    // a filter that shows items with a due date
     pub fn new_forecast() -> Filter {
         let mut f = Filter::empty();
         f.has_due_date = Some(true);
         f
     }
 
+    // a filter that shows completed tasks
     pub fn new_completed() -> Filter {
         let mut f = Filter::empty();
         f.completed = Some(true);
         f
     }
 
+    // creates an Iterator that filters tasks based on self's criteria
     pub fn into_iter<'a, I: Iterator<Item=&'a Task>>(self, iter: I) -> FilterIter<'a, I> {
         FilterIter::new(self, iter)
     }
 }
 
+// the Iterator that does the filtering
 pub struct FilterIter<'a, I> where I: Iterator<Item=&'a Task> {
     filter: Filter,
     tasks: I,
@@ -73,37 +81,45 @@ impl<'a, I> Iterator for FilterIter<'a, I> where I: Iterator<Item=&'a Task> {
     type Item = &'a Task;
 
     fn next(&mut self) -> Option<Self::Item> {
+        // loop through tasks looking for the next one that satisfies all the
+        // conditions
         while let Some(task) = self.tasks.next() {
+            // check if the item is in the inbox
             if let Some(inbox) = self.filter.inbox {
                 if task.inbox != inbox {
                     continue;
                 }
             }
 
+            // check if the item is flagged
             if let Some(flagged) = self.filter.flagged {
                 if task.flagged != flagged {
                     continue;
                 }
             }
 
+            // check if the item is completed
             if let Some(completed) = self.filter.completed {
                 if task.completed.is_some() != completed {
                     continue;
                 }
             }
 
+            // check if the item is part of a project
             if let Some(has_project) = self.filter.has_project {
                 if task.parent.is_some() != has_project {
                     continue;
                 }
             }
 
+            // check if the item has a due date
             if let Some(has_due_date) = self.filter.has_due_date {
                 if task.due.is_some() != has_due_date {
                     continue;
                 }
             }
 
+            // if all checks passed, return this one
             return Some(task);
         }
 

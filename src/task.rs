@@ -9,6 +9,7 @@ fn generate_id() -> ID {
     "x1234567890".into() // TODO
 }
 
+// enumeration of the order in which subtasks can be completed
 #[derive(Debug, PartialEq, Eq)]
 pub enum SubtaskOrder {
     Parallel,
@@ -27,6 +28,7 @@ impl std::str::FromStr for SubtaskOrder {
     }
 }
 
+// a struct to represent a given task to be completed
 #[derive(Debug, PartialEq, Eq)]
 pub struct Task {
     // metadata
@@ -50,6 +52,7 @@ pub struct Task {
     // TODO: repetition and clone attributes
 }
 
+// self explanatory
 impl Default for Task {
     fn default() -> Self {
         Task {
@@ -73,6 +76,10 @@ impl Default for Task {
     }
 }
 
+// turns a Task into a String
+// examples:
+//  [x] this task is complete
+// ![ ] this flagged task is incomplete
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let flag = if self.flagged { "!" } else { " " };

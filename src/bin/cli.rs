@@ -33,15 +33,20 @@ fn perspective_name_to_filter(name: &str) -> Filter {
 fn main() -> Result<(), Box<std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
+    // print usage if too few arguments are passed
     if args.len() < 3 {
         println!("usage: {} [filename] [perspective]", &args[0]);
         std::process::exit(1);
     }
 
+    // open the data file
     let file = open_file(&args[1]);
+    // parse the tasks out
     let tasks = parse(file?)?;
+    // filter the relevant tasks
     let filter = perspective_name_to_filter(&args[2]);
 
+    // print the tasks
     for t in filter.into_iter(tasks.iter()) {
         println!("{}", t);
     }
