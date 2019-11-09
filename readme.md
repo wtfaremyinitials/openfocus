@@ -10,13 +10,13 @@ platforms where OmniFocus is not available, primarily Linux.
 In addition to (hopefully) being useful, it serves as my project for CSCI3010 at
 CU Boulder.
 
-## Roadmap
-
-See [plan.md](./plan.md).
-
 ## Example Usage
 
 `$ cargo run --bin cli -- example.ofocus/ inbox`
+
+## Roadmap
+
+See [plan.md](./plan.md).
 
 ## Dependencies
 
