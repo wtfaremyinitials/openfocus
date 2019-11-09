@@ -21,3 +21,7 @@ See [plan.md](./plan.md).
 ## Dependencies
 
 See [Cargo.toml](./Cargo.toml).
+
+## System Requirements
+
+Any OS that Rust version 1.38.0 supports.
