@@ -16,7 +16,19 @@ pub struct Content {
 
 impl Content {
     pub fn update(&mut self, delta: Content) {
+        // TODO is task-level merge rather than replace needed?
         for task in delta.tasks {
+            let mut replaced = false;
+            for t in self.tasks.iter_mut() {
+                if &t.id == &task.id {
+                    *t = task.clone();
+                    replaced = true;
+                    break;
+                }
+            }
+            if !replaced {
+                self.tasks.push(task.clone());
+            }
         }
     }
 }
@@ -106,7 +118,7 @@ fn parse_task<'a>(
         .expect("tasks must have IDs");
     let mut parent:   Option<ID> = None;
     let mut rank:     Option<i64> = None;
-    let mut inbox:    bool = false;
+    let mut inbox:    bool = true;
     let mut added:    Option<DateTime<Utc>> = None;
     let mut modified: Option<DateTime<Utc>> = None;
     // attributes

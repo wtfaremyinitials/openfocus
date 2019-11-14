@@ -27,9 +27,7 @@ impl Database {
             file_path: path,
             head_id: None,
             archives,
-            content: Content {
-                tasks: Vec::new()
-            }
+            content: Content { tasks: Vec::new() }
         };
 
         db.load_all()?;

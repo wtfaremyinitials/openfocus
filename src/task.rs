@@ -10,7 +10,7 @@ fn generate_id() -> ID {
 }
 
 // enumeration of the order in which subtasks can be completed
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum SubtaskOrder {
     Parallel,
     Sequential,
@@ -29,7 +29,7 @@ impl std::str::FromStr for SubtaskOrder {
 }
 
 // a struct to represent a given task to be completed
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Task {
     // metadata
     pub id: ID,
