@@ -1,4 +1,4 @@
-mod parse;
+pub mod parse; // TODO privatize
 mod plist;
 
 pub mod db;

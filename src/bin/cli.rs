@@ -1,23 +1,8 @@
 use std::env;
 use std::fs::{read_dir, File};
-use openfocus::parse::parse;
+use openfocus::db::Database;
 use openfocus::filter::Filter;
 use openfocus::error::*;
-
-fn open_file(path: &str) -> Result<File, Error> {
-    let data_path = read_dir(path)?
-        .filter(|p| {
-            p.is_ok() && p.as_ref().unwrap()
-                .path().to_str().unwrap()
-                .contains("00000000000000")
-        })
-        .next()
-        .expect("error reading file")
-        .expect("couldn't find data file")
-        .path();
-
-    Ok(File::open(data_path)?)
-}
 
 fn perspective_name_to_filter(name: &str) -> Filter {
     match name {
@@ -40,14 +25,13 @@ fn main() -> Result<(), Box<std::error::Error>> {
     }
 
     // open the data file
-    let file = open_file(&args[1]);
-    // parse the tasks out
-    let tasks = parse(file?)?;
+    let path = (&args[1]).into();
+    let db = Database::new(path)?;
     // filter the relevant tasks
     let filter = perspective_name_to_filter(&args[2]);
 
     // print the tasks
-    for t in filter.into_iter(tasks.iter()) {
+    for t in filter.into_iter(db.content().tasks.iter()) {
         println!("{}", t);
     }
 

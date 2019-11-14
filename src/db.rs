@@ -6,11 +6,18 @@ use crate::task::Task;
 use crate::parse::parse;
 use crate::error::*;
 
-struct Content {
-    tasks: Vec<Task>
+pub struct Content {
+    pub tasks: Vec<Task>
 }
 
-struct Database {
+impl Content {
+    fn update(&mut self, delta: Content) {
+        for task in delta.tasks {
+        }
+    }
+}
+
+pub struct Database {
     file_path: PathBuf,
     head_id: Option<String>,
     archives: Vec<Archive>,
@@ -27,6 +34,7 @@ impl Database {
             .map(|p| Archive::new(p.unwrap().path()))
             .collect::<Result<Vec<Archive>, Error>>()?;
 
+
         let mut db = Database {
             file_path: path,
             head_id: None,
@@ -36,21 +44,34 @@ impl Database {
             }
         };
 
-        db.load_all();
+        db.load_all()?;
 
         Ok(db)
     }
 
-    fn load_all(&mut self) {
-        // TODO
+    fn load_all(&mut self) -> Result<(), Error> {
+        let mut curr: Option<&Archive> = Some(self.archives.iter()
+                        .filter(|a| a.date == "00000000000000")
+                        .next()
+                        .expect("database has no root!"));
+
+        while let Some(archive) = curr {
+            self.content.update(archive.read()?);
+
+            curr = self.archives.iter()
+                    .filter(|a| a.parent_id == archive.id)
+                    .next();
+        }
+
+        Ok(())
     }
 
     pub fn write(&mut self, delta: Content) -> Result<(), Error> {
         let cur_head = self.head_id.as_ref()
             .expect("attempted to write to db without loading it first");
         let archive = Archive::save(cur_head, delta)?;
+        self.head_id = Some((&archive.id).clone());
         self.archives.push(archive);
-        self.head_id = Some(archive.id.into());
         Ok(())
     }
 
@@ -69,7 +90,7 @@ struct Archive {
 impl Archive {
     fn new(path: PathBuf) -> Result<Archive, Error> {
         let path_parser =
-            Regex::new(r"^(\d{14})=([A-Za-z0-9\_\-]{11})-([A-Za-z0-9\_\-]{11})")
+            Regex::new(r"(\d{14})=([A-Za-z0-9_-]{11})\+([A-Za-z0-9_-]{11}).zip$")
             .unwrap();
 
         let path_string: String = path.to_str().unwrap().into();
@@ -93,6 +114,9 @@ impl Archive {
 
     fn read(&self) -> Result<Content, Error> {
         // TODO: invoke parse.rs
-        unimplemented!()
+        println!("read() {}", &self.id);
+        Ok(Content {
+            tasks: Vec::new()
+        })
     }
 }
