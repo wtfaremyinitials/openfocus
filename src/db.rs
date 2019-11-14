@@ -1,21 +1,9 @@
 use regex::Regex;
-use std::fs::read_dir;
-///use std::fs::{read_dir, File};
+use std::fs::{read_dir, File};
 use std::path::PathBuf;
 use crate::task::Task;
-use crate::parse::parse;
+use crate::parse::{Content, parse};
 use crate::error::*;
-
-pub struct Content {
-    pub tasks: Vec<Task>
-}
-
-impl Content {
-    fn update(&mut self, delta: Content) {
-        for task in delta.tasks {
-        }
-    }
-}
 
 pub struct Database {
     file_path: PathBuf,
@@ -113,10 +101,6 @@ impl Archive {
     }
 
     fn read(&self) -> Result<Content, Error> {
-        // TODO: invoke parse.rs
-        println!("read() {}", &self.id);
-        Ok(Content {
-            tasks: Vec::new()
-        })
+        parse(File::open(&self.file_path)?)
     }
 }

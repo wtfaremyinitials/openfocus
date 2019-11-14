@@ -34,10 +34,10 @@ pub struct Task {
     // metadata
     pub id: ID,
     pub parent: Option<ID>,
-    pub rank: i64,
+    pub rank: Option<i64>,
     pub inbox: bool,
     pub added: DateTime<Utc>,
-    pub modified: DateTime<Utc>,
+    pub modified: Option<DateTime<Utc>>,
     // attributes
     pub name: String,
     pub note: Option<String>,
@@ -48,7 +48,7 @@ pub struct Task {
     pub completed: Option<DateTime<Utc>>,
     pub estimated_duration: Option<u64>,
     pub complete_by_children: bool,
-    pub order: SubtaskOrder,
+    pub order: Option<SubtaskOrder>,
     // TODO: repetition and clone attributes
 }
 
@@ -58,10 +58,10 @@ impl Default for Task {
         Task {
             id: generate_id(),
             parent: None,
-            rank: 0,
+            rank: None,
             inbox: false,
             added: Utc::now(),
-            modified: Utc::now(),
+            modified: Some(Utc::now()),
             name: "".into(),
             note: None,
             context: None,
@@ -71,7 +71,7 @@ impl Default for Task {
             completed: None,
             estimated_duration: None,
             complete_by_children: false,
-            order: SubtaskOrder::Sequential,
+            order: Some(SubtaskOrder::Sequential),
         }
     }
 }

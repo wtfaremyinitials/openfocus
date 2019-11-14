@@ -11,7 +11,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
     }
 
     let file = File::open(&args[1])?;
-    let tasks = parse(file)?;
+    let tasks = parse(file)?.tasks;
 
     for task in tasks {
         println!("{:?}", task);

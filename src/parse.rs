@@ -9,8 +9,20 @@ use crate::task::{Task, SubtaskOrder, ID};
 use crate::perspective::{Perspective};
 use crate::plist;
 
+#[derive(Debug)]
+pub struct Content {
+    pub tasks: Vec<Task>
+}
+
+impl Content {
+    pub fn update(&mut self, delta: Content) {
+        for task in delta.tasks {
+        }
+    }
+}
+
 // entry point of parser. takes a File of zip data and extracts Tasks
-pub fn parse(f: File) -> Result<Vec<Task>, Error> {
+pub fn parse(f: File) -> Result<Content, Error> {
     // get the contents.xml from the zip file
     let mut zip = ZipArchive::new(f)?;
     let contents = zip.by_name("contents.xml")?;
@@ -54,7 +66,7 @@ pub fn parse(f: File) -> Result<Vec<Task>, Error> {
     }
 
     // return parsed tasks
-    Ok(tasks)
+    Ok(Content { tasks })
 }
 
 // skips over an arbitrary XML structure by keeping track of depth
@@ -165,8 +177,12 @@ fn parse_task<'a>(
                     }
                     // parses the name of the task
                     "name" => {
-                        let text = get_text_content(parser.next())?;
-                        title = Some(text);
+                        if let Ok(text) = get_text_content(parser.next()) {
+                            title = Some(text);
+                        } else {
+                            title = Some(String::new());
+                            depth -= 1;
+                        }
                     }
                     // parses the additional notes attached to a task
                     "note" => {
@@ -230,10 +246,10 @@ fn parse_task<'a>(
     Ok(Task {
         id,
         parent,
-        rank: rank.expect("Tasks must have a rank"),
+        rank,
         inbox,
         added: added.expect("Tasks must have an added datetime"),
-        modified: modified.expect("Tasks must have a modified datetime"),
+        modified,
         name: title.expect("Tasks must have a name"),
         note,
         completed,
@@ -243,7 +259,7 @@ fn parse_task<'a>(
         start,
         estimated_duration,
         complete_by_children,
-        order: order.expect("Tasks must have a subtask order"),
+        order,
     })
 }
 
