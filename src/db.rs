@@ -2,8 +2,10 @@ use regex::Regex;
 use std::fs::{read_dir, File};
 use std::path::PathBuf;
 use crate::task::Task;
-use crate::parse::{Content, parse};
+use crate::parse::parse;
 use crate::error::*;
+
+pub use crate::parse::Content;
 
 pub struct Database {
     file_path: PathBuf,
@@ -42,6 +44,7 @@ impl Database {
                         .expect("database has no root!"));
 
         while let Some(archive) = curr {
+            self.head_id = Some(archive.id.clone());
             self.content.update(archive.read()?);
 
             curr = self.archives.iter()
@@ -53,6 +56,8 @@ impl Database {
     }
 
     pub fn write(&mut self, delta: Content) -> Result<(), Error> {
+        // if this was a long running process Database.content would need to be
+        // updated somehow
         let cur_head = self.head_id.as_ref()
             .expect("attempted to write to db without loading it first");
         let archive = Archive::save(cur_head, delta)?;
@@ -95,6 +100,7 @@ impl Archive {
     }
 
     fn save(parent_id: &str, delta: Content) -> Result<Archive, Error> {
+        println!("writing delta containing:\n{:?}", delta);
         unimplemented!()
     }
 

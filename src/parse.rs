@@ -15,6 +15,10 @@ pub struct Content {
 }
 
 impl Content {
+    pub fn new_task(task: Task) -> Content{
+        Content { tasks: vec![task] }
+    }
+
     pub fn update(&mut self, delta: Content) {
         // TODO is task-level merge rather than replace needed?
         for task in delta.tasks {
