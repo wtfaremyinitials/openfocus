@@ -12,7 +12,17 @@ CU Boulder.
 
 ## Example Usage
 
+**View inbox tasks**
 `$ cargo run --bin cli -- example.ofocus/ inbox`
+
+**View flagged tasks**
+`$ cargo run --bin cli -- example.ofocus/ flagged`
+
+**View tasks assigned to projects**
+`$ cargo run --bin cli -- example.ofocus/ projects`
+
+**Add a task to the inbox**
+`$ cargo run --bin cli -- example.ofocus/ new "Take out the trash"`
 
 ## Roadmap
 
