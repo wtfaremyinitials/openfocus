@@ -5,6 +5,7 @@ use openfocus::db::{Database, Content};
 use openfocus::filter::Filter;
 use openfocus::error::*;
 
+// converts the name of a filter to a builtin one
 fn perspective_name_to_filter(name: &str) -> Filter {
     match name {
         "inbox" => Filter::new_inbox(),
@@ -16,6 +17,7 @@ fn perspective_name_to_filter(name: &str) -> Filter {
     }
 }
 
+// the main for filter/output mode
 fn filter_main(args: Vec<String>, db: Database) -> Result<(), Box<std::error::Error>> {
     // filter the relevant tasks
     let filter = perspective_name_to_filter(&args[2]);
@@ -28,14 +30,18 @@ fn filter_main(args: Vec<String>, db: Database) -> Result<(), Box<std::error::Er
     Ok(())
 }
 
+// the main for creation mode
 fn create_main(args: Vec<String>, mut db: Database) -> Result<(), Box<std::error::Error>> {
+    // create the task
     let mut task = Task::default();
     task.name = args[3].clone();
     task.inbox = true;
+    // write it to the database
     let delta = Content::new_task(task);
     db.write(delta)
 }
 
+// the actual main that chooses between modes
 fn main() -> Result<(), Box<std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
@@ -45,10 +51,11 @@ fn main() -> Result<(), Box<std::error::Error>> {
         std::process::exit(1);
     }
 
-    // open the data file
+    // open the database
     let path = (&args[1]).into();
     let db = Database::new(path)?;
 
+    // mode switch
     if &args[2] == "new" {
         create_main(args, db)
     } else {
