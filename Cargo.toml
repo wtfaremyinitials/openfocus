@@ -5,6 +5,7 @@ authors = ["Will Franzen <wtfranzen@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+rand = "0.7"
 regex = "1"
 zip = "0.5.3"
 xml-rs = "0.8"
