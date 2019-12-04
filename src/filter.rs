@@ -14,7 +14,7 @@ pub struct Filter {
 
 impl Filter {
     // a filter that lets everything through
-    pub fn empty() -> Filter {
+    pub fn new_empty() -> Filter {
         Filter {
             inbox: None,
             flagged: None,
@@ -24,38 +24,53 @@ impl Filter {
         }
     }
 
+    // a filter that shows tasks that have not been completed
+    pub fn new_incomplete() -> Filter {
+        Filter {
+            inbox: None,
+            flagged: None,
+            completed: Some(false),
+            has_project: None,
+            has_due_date: None,
+        }
+    }
+
+    // a filter that shows tasks that have been completed
+    pub fn new_complete() -> Filter {
+        Filter {
+            inbox: None,
+            flagged: None,
+            completed: Some(true),
+            has_project: None,
+            has_due_date: None,
+        }
+    }
+
     // a filter that shows Inbox items
     pub fn new_inbox() -> Filter {
-        let mut f = Filter::empty();
+        let mut f = Filter::new_incomplete();
         f.inbox = Some(true);
         f
     }
 
     // a filter that shows flagged items
     pub fn new_flagged() -> Filter {
-        let mut f = Filter::empty();
+        let mut f = Filter::new_incomplete();
         f.flagged = Some(true);
         f
     }
 
     // a filter that shows items assigned to projects
     pub fn new_projects() -> Filter {
-        let mut f = Filter::empty();
+        let mut f = Filter::new_empty();
         f.has_project = Some(true);
         f
     }
 
     // a filter that shows items with a due date
     pub fn new_forecast() -> Filter {
-        let mut f = Filter::empty();
+        let mut f = Filter::new_incomplete();
         f.has_due_date = Some(true);
-        f
-    }
-
-    // a filter that shows completed tasks
-    pub fn new_completed() -> Filter {
-        let mut f = Filter::empty();
-        f.completed = Some(true);
         f
     }
 

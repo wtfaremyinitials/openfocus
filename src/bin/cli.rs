@@ -10,7 +10,7 @@ fn perspective_name_to_filter(name: &str) -> Filter {
         "flagged" => Filter::new_flagged(),
         "forecast" => Filter::new_forecast(),
         "projects" => Filter::new_projects(),
-        "completed" => Filter::new_completed(),
+        "completed" => Filter::new_complete(),
         _ => panic!("unknown filter")
     }
 }
