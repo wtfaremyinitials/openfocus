@@ -1,21 +1,8 @@
 use std::fmt;
 use chrono::prelude::*;
 
+use crate::util::{ID, generate_id};
 use crate::error::*;
-
-pub type ID = String;
-
-const alphabet: &'static [u8] =
-    b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-";
-
-fn generate_id() -> ID {
-    /*let mut s = String::new();
-    for i in 0..12 {
-        s.push(alphabet[rand::random::<u8>() % 54])
-    }
-    s*/
-    "1234567890_".into()
-}
 
 // enumeration of the order in which subtasks can be completed
 #[derive(Debug, PartialEq, Eq, Clone)]
