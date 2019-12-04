@@ -1,9 +1,7 @@
 use std::env;
-use std::fs::{read_dir, File};
 use openfocus::task::Task;
 use openfocus::db::{Database, Content};
 use openfocus::filter::Filter;
-use openfocus::error::*;
 
 // converts the name of a filter to a builtin one
 fn perspective_name_to_filter(name: &str) -> Filter {
