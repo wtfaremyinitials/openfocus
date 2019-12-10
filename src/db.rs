@@ -115,7 +115,7 @@ impl Archive {
                 id:        caps.get(3).unwrap().as_str().into(),
             })
         } else {
-            Err(Box::new(OpenFocusError::Parse))
+            Err(crate::err!(Parse))
         }
     }
 

@@ -24,10 +24,10 @@ pub fn parse_plist<'a>(
             "dict" => {
                 Ok(PlistItem::Dict(parse_plist_dict(&mut parser)?))
             }
-            _ => Err(Box::new(OpenFocusError::Parse))
+            _ => Err(crate::err!(Parse))
         }
     } else {
-        Err(Box::new(OpenFocusError::Parse))
+        Err(crate::err!(Parse))
     }
 }
 

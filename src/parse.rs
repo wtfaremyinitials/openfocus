@@ -340,6 +340,6 @@ pub fn get_text_content(
     if let Some(Ok(XmlEvent::Characters(text))) = next {
         Ok(text)
     } else {
-        Err(Box::new(OpenFocusError::Parse))
+        Err(crate::err!(Parse))
     }
 }

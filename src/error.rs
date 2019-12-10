@@ -1,11 +1,37 @@
 // polymorphic error type for convienence
 pub type Error = Box<dyn std::error::Error>;
 
-// error type specific to the project
+// shorthand macro to create an OpenFocusError including line number, file name,
+// and error type
+#[macro_export]
+macro_rules! err {
+    ($kind:ident) => {
+        Box::new(crate::error::OpenFocusError {
+            file: file!(),
+            line: line!(),
+            kind: crate::error::OpenFocusErrorType::$kind,
+        })
+    }
+}
+
 #[derive(Debug)]
-pub enum OpenFocusError { Parse }
+pub struct OpenFocusError {
+    pub file: &'static str,
+    pub line: u32,
+    pub kind: OpenFocusErrorType,
+}
 impl std::error::Error for OpenFocusError {}
 impl std::fmt::Display for OpenFocusError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+// error type specific to the project
+#[derive(Debug)]
+pub enum OpenFocusErrorType { Parse }
+impl std::error::Error for OpenFocusErrorType {}
+impl std::fmt::Display for OpenFocusErrorType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self)
     }

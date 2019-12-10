@@ -19,7 +19,7 @@ impl std::str::FromStr for SubtaskOrder {
         match s {
             "parallel" => Ok(SubtaskOrder::Parallel),
             "sequential" => Ok(SubtaskOrder::Sequential),
-            _ => Err(Box::new(OpenFocusError::Parse)),
+            _ => Err(crate::err!(Parse)),
         }
     }
 }
