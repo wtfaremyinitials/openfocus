@@ -59,10 +59,12 @@ fn update_main(args: Vec<String>, mut db: Database) -> MainResult {
     // update the modified date attribute
     task.modified = Some(Utc::now());
 
+    // print updated task
     println!("{}", &task);
 
     // submit changes
-    unimplemented!()
+    db.write(Content::new_task(task))?;
+    Ok(())
 }
 
 fn do_update<'a>(
