@@ -1,9 +1,11 @@
 use regex::Regex;
 use std::fs::{read_dir, File};
 use std::path::PathBuf;
+use std::io::prelude::*;
+use chrono::Utc;
 use crate::parse::parse;
 use crate::error::*;
-
+use crate::util::generate_id;
 pub use crate::parse::Content;
 
 // represents the whole of a `.ofocus` file (actually a directory)
@@ -73,7 +75,7 @@ impl Database {
         // updated somehow
         let cur_head = self.head_id.as_ref()
             .expect("attempted to write to db without loading it first");
-        let archive = Archive::save(cur_head, delta)?;
+        let archive = Archive::save(cur_head, &self.file_path, delta)?;
         self.head_id = Some((&archive.id).clone());
         self.archives.push(archive);
         Ok(())
@@ -119,10 +121,33 @@ impl Archive {
     }
 
     // write out a Content struct as a delta
-    fn save(parent_id: &str, delta: Content) -> Result<Archive, Error> {
+    fn save(parent_id: &str, db_path: &PathBuf, delta: Content) -> Result<Archive, Error> {
         println!("writing delta containing:\n{:?}", delta);
-        // TODO: XML serialize, then create a ZIP archive, then write to disk
-        unimplemented!()
+        // TODO: XML serialize
+
+        // TODO: create a ZIP archive
+
+        let id = generate_id();
+        let gmt = Utc::now().format("%Y%m%d%6f").to_string();
+        let file_name = format!("{}={}+{}.zip", gmt, parent_id, id);
+        let file_path = {
+            let mut tmp = db_path.clone();
+            tmp.push(file_name);
+            tmp
+        };
+
+
+        let archive = Archive {
+            id,
+            parent_id: parent_id.to_string(),
+            file_path,
+            date: gmt,
+        };
+        let mut file = File::create(archive.file_path.as_path())?;
+        // TODO: write correct data to disk
+        file.write_all(format!("{:?}", delta).as_bytes())?;
+
+        Ok(archive)
     }
 
     // read the contents of this Archive from the underlying file
