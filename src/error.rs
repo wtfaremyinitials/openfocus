@@ -20,6 +20,7 @@ pub struct OpenFocusError {
     pub line: u32,
     pub kind: OpenFocusErrorType,
 }
+
 impl std::error::Error for OpenFocusError {}
 impl std::fmt::Display for OpenFocusError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -29,12 +30,20 @@ impl std::fmt::Display for OpenFocusError {
 
 // error type specific to the project
 #[derive(Debug)]
-pub enum OpenFocusErrorType { Parse, Unknown }
+pub enum OpenFocusErrorType {
+    Parse,
+    NotFound,
+    InvalidArgument,
+    Unknown,
+}
+
 impl std::error::Error for OpenFocusErrorType {}
 impl std::fmt::Display for OpenFocusErrorType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = match self {
             OpenFocusErrorType::Parse => "Parse Error",
+            OpenFocusErrorType::NotFound => "Item Not Found Error",
+            OpenFocusErrorType::InvalidArgument => "Invalid Argument",
             OpenFocusErrorType::Unknown => "Unknown Error",
         };
         write!(f, "{}", s)
