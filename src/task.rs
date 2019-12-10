@@ -1,5 +1,6 @@
 use std::fmt;
 use chrono::prelude::*;
+use colored::*;
 
 use crate::util::{ID, generate_id};
 use crate::error::*;
@@ -77,28 +78,39 @@ impl Default for Task {
 // ![ ] this flagged task is incomplete
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let flag = if self.flagged { "!" } else { " " };
+        let flag = if self.flagged { "!" } else { " " }.bold();
         let complete = if self.completed.is_some() { "x" } else { " " };
-        let name = self.name.replace("\n", "");
+        let mut name = self.name.replace("\n", "");
+        if self.flagged { name = name.bold().to_string() }
         let tabs = {
             let column = 40;
             let count = std::cmp::max(column - self.name.len(), 0) / 8;
             "\t".repeat(count)
         };
         let due = if let Some(due) = self.due {
-            "(".to_string() + &due.to_string() + ")"
+            let date_str = "(".to_string() + &due.to_string() + ")";
+            if due < Utc::now() && !self.completed.is_some() {
+                date_str.red().to_string()
+            } else {
+                date_str
+            }
         } else {
             "".into()
         };
 
-        write!(
-            f,
+        let mut out = format!(
             "{}[{}] {}{}{}",
             flag,
             complete,
             name,
             tabs,
             due,
-        )
+        );
+
+        if self.completed.is_some() {
+            out = out.strikethrough().to_string();
+        }
+
+        write!(f, "{}", out)
     }
 }
