@@ -6,10 +6,10 @@ pub type Error = Box<dyn std::error::Error>;
 #[macro_export]
 macro_rules! err {
     ($kind:ident) => {
-        Box::new(crate::error::OpenFocusError {
+        Box::new(OpenFocusError {
             file: file!(),
             line: line!(),
-            kind: crate::error::OpenFocusErrorType::$kind,
+            kind: OpenFocusErrorType::$kind,
         })
     }
 }
@@ -23,16 +23,20 @@ pub struct OpenFocusError {
 impl std::error::Error for OpenFocusError {}
 impl std::fmt::Display for OpenFocusError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{} at {}:{}", self.kind, self.file, self.line)
     }
 }
 
 // error type specific to the project
 #[derive(Debug)]
-pub enum OpenFocusErrorType { Parse }
+pub enum OpenFocusErrorType { Parse, Unknown }
 impl std::error::Error for OpenFocusErrorType {}
 impl std::fmt::Display for OpenFocusErrorType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        let s = match self {
+            OpenFocusErrorType::Parse => "Parse Error",
+            OpenFocusErrorType::Unknown => "Unknown Error",
+        };
+        write!(f, "{}", s)
     }
 }
