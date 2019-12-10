@@ -63,6 +63,7 @@ fn update_main(args: Vec<String>, mut db: Database) -> MainResult {
     task.modified = Some(Utc::now());
 
     println!("after\n{:?}\n", &task);
+    println!("{}", &task);
 
     // submit changes
     unimplemented!()
@@ -83,6 +84,39 @@ fn do_update<'a>(
         "p" => {
             task.parent = Some(match iter.next() {
                 Some(id) => id.clone(),
+                None => return Err(err!(InvalidArgument))
+            })
+        },
+        "n" => {
+            task.note = Some(match iter.next() {
+                Some(n) => n.clone(),
+                None => return Err(err!(InvalidArgument))
+            })
+        },
+        "c" => {
+            task.completed = Some(Utc::now());
+        },
+        "ic" => {
+            task.completed = None;
+        },
+        "f" => {
+            task.flagged = !task.flagged;
+        },
+        "d" => {
+            task.due = Some(match iter.next() {
+                Some(d) => d.parse()?,
+                None => return Err(err!(InvalidArgument))
+            })
+        },
+        "defer" => {
+            task.due = Some(match iter.next() {
+                Some(d) => d.parse()?,
+                None => return Err(err!(InvalidArgument))
+            })
+        },
+        "e" => {
+            task.estimated_duration = Some(match iter.next() {
+                Some(d) => d.parse()?,
                 None => return Err(err!(InvalidArgument))
             })
         }
