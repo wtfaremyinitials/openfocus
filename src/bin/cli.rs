@@ -75,34 +75,34 @@ fn do_update<'a>(
     iter: &mut impl Iterator<Item = &'a String>
 ) -> MainResult {
     match arg {
-        "t" => {
+        "title" | "t" => {
             task.title = match iter.next() {
                 Some(s) => s.clone(),
                 None => return Err(err!(InvalidArgument))
             }
         },
-        "p" => {
+        "project" | "p" => {
             task.parent = Some(match iter.next() {
                 Some(id) => id.clone(),
                 None => return Err(err!(InvalidArgument))
             })
         },
-        "n" => {
+        "note" | "n" => {
             task.note = Some(match iter.next() {
                 Some(n) => n.clone(),
                 None => return Err(err!(InvalidArgument))
             })
         },
-        "c" => {
+        "complete" | "c" => {
             task.completed = Some(Utc::now());
         },
-        "ic" => {
+        "incomplete" | "ic" => {
             task.completed = None;
         },
-        "f" => {
+        "flag" | "f" => {
             task.flagged = !task.flagged;
         },
-        "d" => {
+        "due" | "d" => {
             task.due = Some(match iter.next() {
                 Some(d) => d.parse()?,
                 None => return Err(err!(InvalidArgument))
@@ -114,7 +114,7 @@ fn do_update<'a>(
                 None => return Err(err!(InvalidArgument))
             })
         },
-        "e" => {
+        "duration" | "estimate" | "e" => {
             task.estimated_duration = Some(match iter.next() {
                 Some(d) => d.parse()?,
                 None => return Err(err!(InvalidArgument))
