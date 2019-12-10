@@ -36,7 +36,6 @@ fn filter_main(args: Vec<String>, db: Database) -> MainResult {
 // the main for create mode
 fn update_main(args: Vec<String>, mut db: Database) -> MainResult {
     let id = &args[3];
-    dbg!(id);
 
     // find the task
     let task: &Task = match db.content().tasks.iter().find(|t| &t.id == id) {
@@ -46,8 +45,6 @@ fn update_main(args: Vec<String>, mut db: Database) -> MainResult {
 
     // clone the task
     let mut task = task.clone();
-
-    println!("before\n{:?}\n", &task);
 
     // update attributes
     let mut iter = args.iter().skip(4);
@@ -62,7 +59,6 @@ fn update_main(args: Vec<String>, mut db: Database) -> MainResult {
     // update the modified date attribute
     task.modified = Some(Utc::now());
 
-    println!("after\n{:?}\n", &task);
     println!("{}", &task);
 
     // submit changes
