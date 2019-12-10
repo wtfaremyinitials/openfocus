@@ -267,7 +267,7 @@ fn parse_task<'a>(
         inbox,
         added: added.expect("Tasks must have an added datetime"),
         modified,
-        name: title.expect("Tasks must have a name"),
+        title: title.expect("Tasks must have a name"),
         note,
         completed,
         context,

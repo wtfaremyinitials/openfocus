@@ -74,8 +74,8 @@ fn do_update<'a>(
     iter: &mut impl Iterator<Item = &'a String>
 ) -> MainResult {
     match arg {
-        "n" => {
-            task.name = match iter.next() {
+        "t" => {
+            task.title = match iter.next() {
                 Some(s) => s.clone(),
                 None => return Err(err!(InvalidArgument))
             }
@@ -96,7 +96,7 @@ fn do_update<'a>(
 fn create_main(args: Vec<String>, mut db: Database) -> MainResult {
     // create the task
     let mut task = Task::default();
-    task.name = args[3].clone();
+    task.title = args[3].clone();
     task.inbox = true;
     // write it to the database
     let delta = Content::new_task(task);

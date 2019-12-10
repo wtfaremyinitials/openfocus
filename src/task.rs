@@ -35,7 +35,7 @@ pub struct Task {
     pub added: DateTime<Utc>,
     pub modified: Option<DateTime<Utc>>,
     // attributes
-    pub name: String,
+    pub title: String,
     pub note: Option<String>,
     pub context: Option<ID>,
     pub flagged: bool,
@@ -58,7 +58,7 @@ impl Default for Task {
             inbox: false,
             added: Utc::now(),
             modified: Some(Utc::now()),
-            name: "".into(),
+            title: "".into(),
             note: None,
             context: None,
             flagged: false,
@@ -80,11 +80,11 @@ impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let flag = if self.flagged { "!" } else { " " }.bold();
         let complete = if self.completed.is_some() { "x" } else { " " };
-        let mut name = self.name.replace("\n", "");
-        if self.flagged { name = name.bold().to_string() }
+        let mut title = self.title.replace("\n", "");
+        if self.flagged { title = title.bold().to_string() }
         let tabs = {
             let column = 40;
-            let count = std::cmp::max(column - self.name.len(), 0) / 8;
+            let count = std::cmp::max(column - self.title.len(), 0) / 8;
             "\t".repeat(count)
         };
         let due = if let Some(due) = self.due {
@@ -102,7 +102,7 @@ impl fmt::Display for Task {
             "{}[{}] {}{}{}",
             flag,
             complete,
-            name,
+            title,
             tabs,
             due,
         );
