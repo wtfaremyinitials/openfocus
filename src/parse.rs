@@ -5,7 +5,7 @@ use xml::attribute::OwnedAttribute;
 use chrono::prelude::*;
 
 use crate::error::*;
-use crate::util::{ID, generate_id};
+use crate::util::ID;
 use crate::task::{Task, SubtaskOrder};
 use crate::perspective::{Perspective};
 use crate::plist;

@@ -1,7 +1,6 @@
 use regex::Regex;
 use std::fs::{read_dir, File};
 use std::path::PathBuf;
-use crate::task::Task;
 use crate::parse::parse;
 use crate::error::*;
 
