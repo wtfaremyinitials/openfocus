@@ -12,12 +12,13 @@ use crate::plist;
 
 #[derive(Debug)]
 pub struct Content {
-    pub tasks: Vec<Task>
+    pub tasks: Vec<Task>,
+    pub perspectives: Vec<Perspective>,
 }
 
 impl Content {
     pub fn new_task(task: Task) -> Content{
-        Content { tasks: vec![task] }
+        Content { tasks: vec![task], perspectives: vec![] }
     }
 
     pub fn update(&mut self, delta: Content) {
@@ -51,6 +52,9 @@ pub fn parse(f: File) -> Result<Content, Error> {
     // create vector to store parsed tasks
     let mut tasks: Vec<Task> = Vec::new();
 
+    // create vector to store parsed perspectives
+    let mut perspectives: Vec<Perspective> = Vec::new();
+
     // iterate over the XML events
     while let Some(evt) = parser.next() {
         match evt {
@@ -63,7 +67,8 @@ pub fn parse(f: File) -> Result<Content, Error> {
                     }
                     // <perspective>
                     "perspective" => {
-                        // TODO parse_perspective(&mut parser, attributes)?;
+                        let persp = parse_perspective(&mut parser, attributes)?;
+                        perspectives.push(persp);
                     }
                     "omnifocus" => continue,
                     _ => skip(&mut parser)?
@@ -83,7 +88,7 @@ pub fn parse(f: File) -> Result<Content, Error> {
     }
 
     // return parsed tasks
-    Ok(Content { tasks })
+    Ok(Content { tasks, perspectives })
 }
 
 // skips over an arbitrary XML structure by keeping track of depth

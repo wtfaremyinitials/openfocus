@@ -34,5 +34,23 @@ pub fn parse_plist<'a>(
 pub fn parse_plist_dict<'a>(
     mut parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
 ) -> Result<HashMap<String, PlistItem>, Error> {
-    unimplemented!()
+    let mut map = HashMap::new();
+    while let Some(evt) = parser.next() {
+        match evt {
+            Ok(XmlEvent::StartElement { name, .. }) => {
+                assert!(name_to_str(&name) == "key");
+                let key = get_text_content(parser.next())?;
+                parser.next();
+                let value = parse_plist(parser)?;
+                map.insert(key, value);
+            },
+            Ok(XmlEvent::EndElement { name, .. }) => {
+                if name_to_str(&name) == "dict" {
+                    break
+                }
+            },
+            _ => return Err(crate::err!(Parse)),
+        }
+    }
+    Ok(map)
 }
