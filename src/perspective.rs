@@ -1,6 +1,6 @@
 use chrono::prelude::*;
 
-use crate::util::{ID, generate_id};
+use crate::util::ID;
 
 // struct to represent a perspective. WORK IN PROGRESS
 #[derive(Debug, PartialEq, Eq)]

@@ -7,7 +7,7 @@ const ALPHABET: &'static [u8] =
 
 pub fn generate_id() -> ID {
     let mut s = String::new();
-    for i in 0..11 {
+    for _ in 0..11 {
         s.push(ALPHABET[thread_rng().gen_range(0, ALPHABET.len())] as char)
     }
     s
