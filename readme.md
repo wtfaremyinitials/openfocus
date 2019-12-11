@@ -10,19 +10,48 @@ platforms where OmniFocus is not available, primarily Linux.
 In addition to (hopefully) being useful, it serves as my project for CSCI3010 at
 CU Boulder.
 
+## Usage
+
+```
+of <ofocus file> <inbox | flagged | forecast | projects | completed>
+of <ofocus file> new "<title>"
+of <ofocus file> update [-title "<title>"]
+                        [-project <parent id>]
+                        [-complete]
+                        [-incomplete]
+                        [-flag]
+                        [-due <date>]
+                        [-defer <date>]
+                        [-duration <minutes>]
+```
+
 ## Example Usage
 
+`$ alias of='cargo run --bin cli --'` *or install to your $PATH*
+
 **View inbox tasks**
-`$ cargo run --bin cli -- example.ofocus/ inbox`
+
+`$ of example.ofocus/ inbox`
 
 **View flagged tasks**
-`$ cargo run --bin cli -- example.ofocus/ flagged`
+
+`$ of example.ofocus/ flagged`
 
 **View tasks assigned to projects**
-`$ cargo run --bin cli -- example.ofocus/ projects`
+
+`$ of example.ofocus/ projects`
 
 **Add a task to the inbox**
-`$ cargo run --bin cli -- example.ofocus/ new "Take out the trash"`
+
+`$ of example.ofocus/ new "Take out the trash"`
+
+**Flag a task**
+
+`$ of example.ofocus/ update TGltYxe7SNY -flag`
+
+**Change a task's title**
+
+`$ of example.ofocus/ update TGltYxe7SNY -title "New title"`
 
 ## Roadmap
 
