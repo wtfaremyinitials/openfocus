@@ -124,8 +124,6 @@ impl Archive {
 
     // write out a Content struct as a delta
     fn save(parent_id: &str, db_path: &PathBuf, delta: Content) -> Result<Archive, Error> {
-        println!("writing delta containing:\n{:?}", delta);
-
         let id = generate_id();
         let gmt = Utc::now().format("%Y%m%d%6f").to_string();
         let file_name = format!("{}={}+{}.zip", gmt, parent_id, id);
@@ -143,25 +141,21 @@ impl Archive {
             date: gmt,
         };
 
-        /*
         let mut file = File::create(archive.file_path.as_path())?;
         let mut zip = ZipWriter::new(file);
         zip.start_file("contents.xml", zip::write::FileOptions::default())?;
         let mut xml = EventWriter::new(zip);
-        */
 
-        println!("\n\n\n");
-        let stdout = std::io::stdout();
+        // i honestly just don't feel like making the generics work right now
+        type ConcreteEventWriter = EventWriter<ZipWriter<File>>;
 
-        let mut xml = EventWriter::new(stdout.lock());
-
-        fn end(xml: &mut EventWriter<std::io::StdoutLock>) {
+        fn end(xml: &mut ConcreteEventWriter) {
             let tmp: XmlEvent = XmlEvent::end_element().into();
             xml.write(tmp);
         }
 
         fn text(
-            xml: &mut EventWriter<std::io::StdoutLock>,
+            xml: &mut ConcreteEventWriter,
             name: &str,
             text: &str
         ) {
@@ -173,7 +167,7 @@ impl Archive {
         }
 
         fn attrs_open(
-            xml: &mut EventWriter<std::io::StdoutLock>,
+            xml: &mut ConcreteEventWriter,
             name: &str,
             attrs: Vec<(&str, &str)>
         ) {
@@ -186,7 +180,7 @@ impl Archive {
         }
 
         fn attrs(
-            xml: &mut EventWriter<std::io::StdoutLock>,
+            xml: &mut ConcreteEventWriter,
             name: &str,
             attrs: Vec<(&str, &str)>
         ) {
