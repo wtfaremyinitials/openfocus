@@ -12,6 +12,22 @@ pub enum PlistItem {
     Dict(HashMap<String, PlistItem>),
 }
 
+impl PlistItem {
+    pub fn unwrap_string<'a>(&'a self) -> &'a String {
+        match self {
+            PlistItem::String(s) => s,
+            _ => panic!()
+        }
+    }
+
+    pub fn unwrap_dict<'a>(&'a self) -> &'a HashMap<String, PlistItem> {
+        match self {
+            PlistItem::Dict(d) => d,
+            _ => panic!()
+        }
+    }
+}
+
 // TODO: use dynamic something or other do decouple this from ZipFile
 pub fn parse_plist<'a>(
     mut parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,

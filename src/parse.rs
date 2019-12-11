@@ -297,14 +297,17 @@ fn parse_perspective<'a>(
     while let Some(evt) = parser.next() {
         match evt {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                match name_to_str(&name) {
+                match name_to_str(dbg!(&name)) {
                     "added" => {
                         let text = get_text_content(parser.next())?;
                         added = Some(text.parse()?);
                     }
                     "plist" => {
-                        let plist = plist::parse_plist(&mut parser);
-                        dbg!(plist);
+                        let plist = plist::parse_plist(&mut parser)?;
+                        let plist = plist.unwrap_dict();
+                        let filter_json = plist.get("filterRules")
+                                              .unwrap()
+                                              .unwrap_string();
                     }
                     _ => {}
                 }
