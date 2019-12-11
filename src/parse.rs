@@ -285,12 +285,13 @@ fn parse_task<'a>(
     })
 }
 
-// parses a <perspective>. WORK IN PROGRESS
+// parses a <perspective>
 fn parse_perspective<'a>(
     mut parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
     _root_attrs: Vec<OwnedAttribute>,
 ) -> Result<Perspective, Error> {
     // TODO: depth purely for error handling? 
+    // TODO: perspective names...?
 
     let mut added: Option<DateTime<Utc>> = None;
 
@@ -302,6 +303,14 @@ fn parse_perspective<'a>(
                         let text = get_text_content(parser.next())?;
                         added = Some(text.parse()?);
                     }
+
+                    // omnifocus encodes filter rules
+                    // in JSON
+                    // inside PLIST
+                    // inside XML
+                    // inside ZIP
+                    // inside a directory<b>.</b>
+                    // <i>sigh</i>
                     "plist" => {
                         let plist = plist::parse_plist(&mut parser)?;
                         let plist = plist.unwrap_dict();

@@ -149,12 +149,14 @@ impl Archive {
         // i honestly just don't feel like making the generics work right now
         type ConcreteEventWriter = EventWriter<ZipWriter<File>>;
 
+        // write a closing tag out
         fn end(xml: &mut ConcreteEventWriter) -> Result<(), Error> {
             let tmp: XmlEvent = XmlEvent::end_element().into();
             xml.write(tmp)?;
             Ok(())
         }
 
+        // write the form <foo>bar</foo>
         fn text(
             xml: &mut ConcreteEventWriter,
             name: &str,
@@ -168,6 +170,7 @@ impl Archive {
             Ok(())
         }
 
+        // write the form <foo bar="baz">...
         fn attrs_open(
             xml: &mut ConcreteEventWriter,
             name: &str,
@@ -182,6 +185,8 @@ impl Archive {
             Ok(())
         }
 
+
+        // write the form <foo bar="baz" />
         fn attrs(
             xml: &mut ConcreteEventWriter,
             name: &str,
@@ -192,13 +197,17 @@ impl Archive {
             Ok(())
         }
 
+        // write <?xml version="1.0" encoding="UTF-8"?>
         xml.write(XmlEvent::StartDocument {
             encoding: Some("UTF-8"),
             standalone: None,
             version: xml::common::XmlVersion::Version10,
         })?;
+
+        // write newline
         xml.inner_mut().write(b"\n")?;
 
+        // write the opening <omnifocus ...> tag
         attrs_open(&mut xml, "omnifocus", vec![
             ("xmlns", "http://www.omnigroup.com/namespace/OmniFocus/v2"),
             ("app-id", "wtf.will.openfocus"),
@@ -208,6 +217,7 @@ impl Archive {
             ("machine-model", "unknown")
         ])?;
 
+        // iterate each task
         for task in delta.tasks {
             // write <task id="{id}">
             attrs_open(&mut xml, "task", vec![("id", &task.id)])?;
@@ -317,9 +327,13 @@ impl Archive {
             end(&mut xml)?;
         }
 
+        // write </omnifocus>
         end(&mut xml)?;
+
+        // write newline
         xml.inner_mut().write(b"\n")?;
 
+        // return the new archive to the database object
         Ok(archive)
     }
 

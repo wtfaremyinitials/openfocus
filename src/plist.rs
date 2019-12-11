@@ -47,6 +47,7 @@ pub fn parse_plist<'a>(
     }
 }
 
+// turns <dict><key>...</key><whatever>...</whatever></dict> into a HashMap
 pub fn parse_plist_dict<'a>(
     parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
 ) -> Result<HashMap<String, PlistItem>, Error> {
@@ -57,6 +58,7 @@ pub fn parse_plist_dict<'a>(
                 assert!(name_to_str(&name) == "key");
                 let key = get_text_content(parser.next())?;
                 parser.next();
+                // recursively call parse_plist on the value
                 let value = parse_plist(parser)?;
                 map.insert(key, value);
             },

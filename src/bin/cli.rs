@@ -67,6 +67,7 @@ fn update_main(args: Vec<String>, mut db: Database) -> MainResult {
     Ok(())
 }
 
+// apply a single command line flag to a task
 fn do_update<'a>(
     task: &mut Task,
     arg: &str,
