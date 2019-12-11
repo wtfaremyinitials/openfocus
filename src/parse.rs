@@ -298,7 +298,7 @@ fn parse_perspective<'a>(
     while let Some(evt) = parser.next() {
         match evt {
             Ok(XmlEvent::StartElement { name, .. }) => {
-                match name_to_str(dbg!(&name)) {
+                match name_to_str(&name) {
                     "added" => {
                         let text = get_text_content(parser.next())?;
                         added = Some(text.parse()?);
