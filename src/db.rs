@@ -6,7 +6,7 @@ use chrono::Utc;
 use crate::parse::parse;
 use crate::error::*;
 use crate::util::generate_id;
-use xml::writer::{EventWriter, EmitterConfig, XmlEvent};
+use xml::writer::{EventWriter, XmlEvent};
 use zip::write::ZipWriter;
 pub use crate::parse::Content;
 
@@ -141,7 +141,7 @@ impl Archive {
             date: gmt,
         };
 
-        let mut file = File::create(archive.file_path.as_path())?;
+        let file = File::create(archive.file_path.as_path())?;
         let mut zip = ZipWriter::new(file);
         zip.start_file("contents.xml", zip::write::FileOptions::default())?;
         let mut xml = EventWriter::new(zip);
@@ -149,43 +149,47 @@ impl Archive {
         // i honestly just don't feel like making the generics work right now
         type ConcreteEventWriter = EventWriter<ZipWriter<File>>;
 
-        fn end(xml: &mut ConcreteEventWriter) {
+        fn end(xml: &mut ConcreteEventWriter) -> Result<(), Error> {
             let tmp: XmlEvent = XmlEvent::end_element().into();
-            xml.write(tmp);
+            xml.write(tmp)?;
+            Ok(())
         }
 
         fn text(
             xml: &mut ConcreteEventWriter,
             name: &str,
             text: &str
-        ) {
+        ) -> Result<(), Error> {
             let tmp: XmlEvent = XmlEvent::start_element(name).into();
-            xml.write(tmp);
+            xml.write(tmp)?;
             let tmp: XmlEvent = XmlEvent::characters(text).into();
-            xml.write(tmp);
-            end(xml);
+            xml.write(tmp)?;
+            end(xml)?;
+            Ok(())
         }
 
         fn attrs_open(
             xml: &mut ConcreteEventWriter,
             name: &str,
             attrs: Vec<(&str, &str)>
-        ) {
+        ) -> Result<(), Error> {
             let mut tmp = XmlEvent::start_element(name);
             for (k, v) in attrs {
                 tmp = tmp.attr(k, v);
             }
             let tmp: XmlEvent = tmp.into();
-            xml.write(tmp);
+            xml.write(tmp)?;
+            Ok(())
         }
 
         fn attrs(
             xml: &mut ConcreteEventWriter,
             name: &str,
             attrs: Vec<(&str, &str)>
-        ) {
-            attrs_open(xml, name, attrs);
-            end(xml);
+        ) -> Result<(), Error> {
+            attrs_open(xml, name, attrs)?;
+            end(xml)?;
+            Ok(())
         }
 
         xml.write(XmlEvent::StartDocument {
@@ -193,9 +197,7 @@ impl Archive {
             standalone: None,
             version: xml::common::XmlVersion::Version10,
         })?;
-        xml.inner_mut().write(b"\n");
-
-        let mut tmp: XmlEvent = XmlEvent::start_element("tmp").into();
+        xml.inner_mut().write(b"\n")?;
 
         attrs_open(&mut xml, "omnifocus", vec![
             ("xmlns", "http://www.omnigroup.com/namespace/OmniFocus/v2"),
@@ -204,44 +206,44 @@ impl Archive {
             ("os-name", "unknown"),
             ("os-version", "unknown"),
             ("machine-model", "unknown")
-        ]);
+        ])?;
 
         for task in delta.tasks {
             // write <task id="{id}">
-            attrs_open(&mut xml, "task", vec![("id", &task.id)]);
+            attrs_open(&mut xml, "task", vec![("id", &task.id)])?;
 
             // write <project/>
-            attrs(&mut xml, "project", vec![]);
+            attrs(&mut xml, "project", vec![])?;
 
             // write <inbox>{true/false}</inbox>
-            text(&mut xml, "inbox", &task.inbox.to_string());
+            text(&mut xml, "inbox", &task.inbox.to_string())?;
 
             // write <task />
             if let Some(parent_id) = task.parent {
-                attrs(&mut xml, "task", vec![("id", &parent_id)]);
+                attrs(&mut xml, "task", vec![("id", &parent_id)])?;
             } else {
-                attrs(&mut xml, "task", vec![]);
+                attrs(&mut xml, "task", vec![])?;
             }
 
             // write <added>{date}</added>
             text(&mut xml, "added", &task.added.to_rfc3339_opts(
                 chrono::SecondsFormat::Millis,
                 true
-            ));
+            ))?;
 
             // write <name>{title}</name>
-            text(&mut xml, "name", &task.title);
+            text(&mut xml, "name", &task.title)?;
 
             // write <rank>{rank}</rank>
             if let Some(rank) = task.rank {
-                text(&mut xml, "rank", &rank.to_string());
+                text(&mut xml, "rank", &rank.to_string())?;
             }
 
             // write <context />
             if let Some(context_id) = task.context {
-                attrs(&mut xml, "context", vec![("id", &context_id)]);
+                attrs(&mut xml, "context", vec![("id", &context_id)])?;
             } else {
-                attrs(&mut xml, "context", vec![]);
+                attrs(&mut xml, "context", vec![])?;
             }
 
             // write <start>{date}</start>
@@ -249,9 +251,9 @@ impl Archive {
                 text(&mut xml, "start", &start.to_rfc3339_opts(
                     chrono::SecondsFormat::Millis,
                     true
-                ));
+                ))?;
             } else {
-                attrs(&mut xml, "start", vec![]);
+                attrs(&mut xml, "start", vec![])?;
             }
 
             // write <due>{date}</due>
@@ -259,9 +261,9 @@ impl Archive {
                 text(&mut xml, "due", &due.to_rfc3339_opts(
                     chrono::SecondsFormat::Millis,
                     true
-                ));
+                ))?;
             } else {
-                attrs(&mut xml, "due", vec![]);
+                attrs(&mut xml, "due", vec![])?;
             }
 
             // write <completed>{date}</completed>
@@ -269,9 +271,9 @@ impl Archive {
                 text(&mut xml, "completed", &completed.to_rfc3339_opts(
                     chrono::SecondsFormat::Millis,
                     true
-                ));
+                ))?;
             } else {
-                attrs(&mut xml, "completed", vec![]);
+                attrs(&mut xml, "completed", vec![])?;
             }
 
             // write <modified>{date}</modified>
@@ -279,44 +281,44 @@ impl Archive {
                 text(&mut xml, "modified", &modified.to_rfc3339_opts(
                     chrono::SecondsFormat::Millis,
                     true
-                ));
+                ))?;
             } else {
-                attrs(&mut xml, "modified", vec![]);
+                attrs(&mut xml, "modified", vec![])?;
             }
 
             // write <estimated-minutes>
             if let Some(est) = task.estimated_duration {
-                text(&mut xml, "estimated-minutes", &est.to_string());
+                text(&mut xml, "estimated-minutes", &est.to_string())?;
             } else {
-                attrs(&mut xml, "estimated-minutes", vec![]);
+                attrs(&mut xml, "estimated-minutes", vec![])?;
             }
 
             // write <flagged>{true/false}</flagged>
-            text(&mut xml, "flagged", &task.flagged.to_string());
+            text(&mut xml, "flagged", &task.flagged.to_string())?;
 
             // write <complete-by-children>{true/false}</complete-by-children>
             text(
                 &mut xml,
                 "complete-by-children",
                 &task.complete_by_children.to_string()
-            );
+            )?;
 
             // write <order>{parallel/sequential}</order>
             if let Some(order) = task.order {
                 text(&mut xml, "order", match order {
                     crate::task::SubtaskOrder::Parallel => "parallel",
                     crate::task::SubtaskOrder::Sequential => "sequential",
-                });
+                })?;
             } else {
-                attrs(&mut xml, "order", vec![]);
+                attrs(&mut xml, "order", vec![])?;
             }
 
             // </task>
-            end(&mut xml);
+            end(&mut xml)?;
         }
 
-        end(&mut xml);
-        xml.inner_mut().write(b"\n");
+        end(&mut xml)?;
+        xml.inner_mut().write(b"\n")?;
 
         Ok(archive)
     }
