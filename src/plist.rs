@@ -48,7 +48,7 @@ pub fn parse_plist<'a>(
 }
 
 pub fn parse_plist_dict<'a>(
-    mut parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
+    parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
 ) -> Result<HashMap<String, PlistItem>, Error> {
     let mut map = HashMap::new();
     while let Some(evt) = parser.next() {

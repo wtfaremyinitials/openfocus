@@ -288,7 +288,7 @@ fn parse_task<'a>(
 // parses a <perspective>. WORK IN PROGRESS
 fn parse_perspective<'a>(
     mut parser: &mut xml::reader::Events<zip::read::ZipFile<'a>>,
-    root_attrs: Vec<OwnedAttribute>,
+    _root_attrs: Vec<OwnedAttribute>,
 ) -> Result<Perspective, Error> {
     // TODO: depth purely for error handling? 
 
@@ -296,7 +296,7 @@ fn parse_perspective<'a>(
 
     while let Some(evt) = parser.next() {
         match evt {
-            Ok(XmlEvent::StartElement { name, attributes, .. }) => {
+            Ok(XmlEvent::StartElement { name, .. }) => {
                 match name_to_str(dbg!(&name)) {
                     "added" => {
                         let text = get_text_content(parser.next())?;
@@ -305,6 +305,7 @@ fn parse_perspective<'a>(
                     "plist" => {
                         let plist = plist::parse_plist(&mut parser)?;
                         let plist = plist.unwrap_dict();
+                        #[allow(unused_variables)]
                         let filter_json = plist.get("filterRules")
                                               .unwrap()
                                               .unwrap_string();
