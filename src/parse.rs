@@ -161,7 +161,8 @@ fn parse_task<'a>(
                     }
                     // parse the inbox status of the task
                     "inbox" => {
-                        inbox = true;
+                        let text = get_text_content(parser.next())?;
+                        inbox = text.parse()?;
                     }
                     // parse added date of a task
                     "added" => {
